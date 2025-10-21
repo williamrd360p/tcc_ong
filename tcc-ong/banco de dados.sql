@@ -1,7 +1,12 @@
--- Desativa a verificação de chaves estrangeiras para dropar as tabelas na ordem correta
+-- Criação do schema
+CREATE SCHEMA IF NOT EXISTS `bd_ong` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `bd_ong`;
+
+-- Desativa verificação de chaves estrangeiras temporariamente
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS tb_calendario_projeto_has_tb_eventos;
+-- Dropa as tabelas na ordem correta
+DROP TABLE IF EXISTS tb_calendario_projetos_has_tb_eventos;
 DROP TABLE IF EXISTS tb_perfis;
 DROP TABLE IF EXISTS tb_aulas_has_tb_usuarios;
 DROP TABLE IF EXISTS tb_aulas;
@@ -10,11 +15,10 @@ DROP TABLE IF EXISTS tb_eventos;
 DROP TABLE IF EXISTS tb_usuarios;
 DROP TABLE IF EXISTS tb_ongs;
 
+-- Ativa novamente
 SET FOREIGN_KEY_CHECKS = 1;
 
--- Criação do schema bd_ong
-CREATE SCHEMA IF NOT EXISTS `bd_ong` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `bd_ong`;
+
 
 -- Tabela ONGs
 CREATE TABLE IF NOT EXISTS `tb_ongs` (
@@ -26,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `tb_ongs` (
     `nm_endereco` VARCHAR(150) NOT NULL,
     `nr_endereco` VARCHAR(50) NOT NULL,
     PRIMARY KEY (`cd_ong`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela Usuários
 CREATE TABLE IF NOT EXISTS `tb_usuarios` (
@@ -37,14 +41,13 @@ CREATE TABLE IF NOT EXISTS `tb_usuarios` (
     `rg` VARCHAR(20) DEFAULT NULL,
     `dt_nascimento` DATE DEFAULT NULL,
     `nm_responsavel` VARCHAR(100) DEFAULT NULL,
-    `email` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(100) NOT NULL UNIQUE,
     `senha` VARCHAR(255) NOT NULL,
     `tipo_usuario` ENUM('administrador','voluntario','aluno') NOT NULL,
     `fk_cd_ong` INT NOT NULL,
     PRIMARY KEY (`cd_usuario`),
-    UNIQUE KEY `email_UNIQUE` (`email`),
     CONSTRAINT `fk_usuarios_ongs` FOREIGN KEY (`fk_cd_ong`) REFERENCES `tb_ongs`(`cd_ong`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela Calendário de Projetos
 CREATE TABLE IF NOT EXISTS `tb_calendario_projetos` (
@@ -57,11 +60,9 @@ CREATE TABLE IF NOT EXISTS `tb_calendario_projetos` (
     `fk_cd_ong` INT NOT NULL,
     `fk_cd_administrador` INT NOT NULL,
     PRIMARY KEY (`cd_projeto`),
-    INDEX `idx_fk_cd_ong` (`fk_cd_ong`),
-    INDEX `idx_fk_cd_administrador` (`fk_cd_administrador`),
-    CONSTRAINT `fk_calendario_projetos_ongs` FOREIGN KEY (`fk_cd_ong`) REFERENCES `tb_ongs`(`cd_ong`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_calendario_projetos_usuarios` FOREIGN KEY (`fk_cd_administrador`) REFERENCES `tb_usuarios`(`cd_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    CONSTRAINT `fk_calendario_projetos_ongs` FOREIGN KEY (`fk_cd_ong`) REFERENCES `tb_ongs`(`cd_ong`),
+    CONSTRAINT `fk_calendario_projetos_usuarios` FOREIGN KEY (`fk_cd_administrador`) REFERENCES `tb_usuarios`(`cd_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela Aulas
 CREATE TABLE IF NOT EXISTS `tb_aulas` (
@@ -74,22 +75,18 @@ CREATE TABLE IF NOT EXISTS `tb_aulas` (
     `fk_cd_ong` INT NOT NULL,
     `fk_cd_projeto` INT NOT NULL,
     PRIMARY KEY (`cd_aula`),
-    INDEX `idx_fk_cd_ong` (`fk_cd_ong`),
-    INDEX `idx_fk_cd_projeto` (`fk_cd_projeto`),
-    CONSTRAINT `fk_aulas_ongs` FOREIGN KEY (`fk_cd_ong`) REFERENCES `tb_ongs`(`cd_ong`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_aulas_calendario_projetos` FOREIGN KEY (`fk_cd_projeto`) REFERENCES `tb_calendario_projetos`(`cd_projeto`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    CONSTRAINT `fk_aulas_ongs` FOREIGN KEY (`fk_cd_ong`) REFERENCES `tb_ongs`(`cd_ong`),
+    CONSTRAINT `fk_aulas_calendario_projetos` FOREIGN KEY (`fk_cd_projeto`) REFERENCES `tb_calendario_projetos`(`cd_projeto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela Relação Aulas x Usuários (alunos inscritos)
 CREATE TABLE IF NOT EXISTS `tb_aulas_has_tb_usuarios` (
     `fk_cd_aula` INT NOT NULL,
     `fk_cd_usuario` INT NOT NULL,
     PRIMARY KEY (`fk_cd_aula`, `fk_cd_usuario`),
-    INDEX `idx_fk_cd_aula` (`fk_cd_aula`),
-    INDEX `idx_fk_cd_usuario` (`fk_cd_usuario`),
-    CONSTRAINT `fk_aulas_has_tb_aulas` FOREIGN KEY (`fk_cd_aula`) REFERENCES `tb_aulas`(`cd_aula`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_aulas_has_tb_usuarios` FOREIGN KEY (`fk_cd_usuario`) REFERENCES `tb_usuarios`(`cd_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    CONSTRAINT `fk_aulas_has_tb_aulas` FOREIGN KEY (`fk_cd_aula`) REFERENCES `tb_aulas`(`cd_aula`),
+    CONSTRAINT `fk_aulas_has_tb_usuarios` FOREIGN KEY (`fk_cd_usuario`) REFERENCES `tb_usuarios`(`cd_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela Eventos
 CREATE TABLE IF NOT EXISTS `tb_eventos` (
@@ -100,40 +97,52 @@ CREATE TABLE IF NOT EXISTS `tb_eventos` (
     `dt_dia` DATE NOT NULL,
     `img_evento` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`cd_evento`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Tabela Perfis
+-- Tabela Perfis (para exibir imagem e nome do perfil)
 CREATE TABLE IF NOT EXISTS `tb_perfis` (
     `cd_perfil` INT NOT NULL AUTO_INCREMENT,
     `img_perfil` VARCHAR(255) NOT NULL,
     `nm_usuario` VARCHAR(100) NOT NULL,
     `fk_cd_usuario` INT NOT NULL,
     PRIMARY KEY (`cd_perfil`),
-    INDEX `idx_fk_cd_usuario` (`fk_cd_usuario`),
-    CONSTRAINT `fk_perfis_usuarios` FOREIGN KEY (`fk_cd_usuario`) REFERENCES `tb_usuarios`(`cd_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    CONSTRAINT `fk_perfis_usuarios` FOREIGN KEY (`fk_cd_usuario`) REFERENCES `tb_usuarios`(`cd_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Tabela Relacionamento Calendário Projeto e Evento
+-- Relacionamento Projeto x Evento
 CREATE TABLE IF NOT EXISTS `tb_calendario_projetos_has_tb_eventos` (
     `fk_cd_projeto` INT NOT NULL,
     `fk_cd_evento` INT NOT NULL,
     PRIMARY KEY (`fk_cd_projeto`, `fk_cd_evento`),
-    INDEX `idx_fk_cd_evento` (`fk_cd_evento`),
-    INDEX `idx_fk_cd_projeto` (`fk_cd_projeto`),
-    CONSTRAINT `fk_calendario_projetos_has_tb_eventos_projetos` FOREIGN KEY (`fk_cd_projeto`) REFERENCES `tb_calendario_projetos`(`cd_projeto`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT `fk_calendario_projetos_has_tb_eventos_eventos` FOREIGN KEY (`fk_cd_evento`) REFERENCES `tb_eventos`(`cd_evento`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    CONSTRAINT `fk_calendario_projetos_has_tb_eventos_projetos` FOREIGN KEY (`fk_cd_projeto`) REFERENCES `tb_calendario_projetos`(`cd_projeto`),
+    CONSTRAINT `fk_calendario_projetos_has_tb_eventos_eventos` FOREIGN KEY (`fk_cd_evento`) REFERENCES `tb_eventos`(`cd_evento`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Inserir ONG Exemplo
-INSERT INTO tb_ongs (nm_ong, cnpj_ong, nm_email, nr_telefone, nm_endereco, nr_endereco)
-VALUES ('Minha ONG Exemplo', '12345678000199', 'contato@minhaong.org', '11999999999', 'Rua Exemplo, 123', '123');
-
--- Inserir Administrador Exemplo (senha bcrypt para "admin123")
-INSERT INTO tb_usuarios (nm_usuario, email, senha, tipo_usuario, fk_cd_ong)
+-- =====================================
+-- Inserção inicial da ONG
+-- =====================================
+INSERT INTO tb_ongs (
+    nm_ong, cnpj_ong, nm_email, nr_telefone, nm_endereco, nr_endereco
+)
 VALUES (
- 'willianfeikk@gmail.com',
-    '$2a$12$n0v6Jx8n6zDOVueil.J2Zultoo4J2VRNnqKSmI8wE/e0WtOWbFOya', 
-    'Administrador Willian',
+    'Espaço Tia Jú', '12345678000199', 'contato@tiaju.org', '13991234567', 'Rua Santa Cecilia', '560'
+);
+
+-- =====================================
+-- Inserção de administrador válido
+-- =====================================
+-- Senha = admin123 (bcrypt gerado previamente)
+INSERT INTO tb_usuarios (
+    nm_usuario,
+    email,
+    senha,
+    tipo_usuario,
+    fk_cd_ong
+)
+VALUES (
+    'Willian Administrador',
+    'willianfeikk@gmail.com',
+    '$2y$10$8eIo8l09DoKEK3UuZhYxwO0Tw4dfkIYBccgdEtU/xEDn5RQuCDnKq', -- "admin123"
     'administrador',
     1
 );

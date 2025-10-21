@@ -3,18 +3,16 @@ session_start();
 
 // Verifica se o usuário está logado como administrador
 if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'administrador') {
-    // Redireciona para o formulário de login (gestao.html)
-    header("Location: gestao.html");
+    header("Location: gestao.php");
     exit;
 }
 ?>
-    
 <!DOCTYPE html>
-<html lang="PT-BR">
+<html lang="PT‑BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área Restrita - Espaço Tia Jú</title>
+    <meta charset="UTF‑8">
+    <meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+    <title>Área Restrita ‑ Espaço Tia Jú</title>
     <link rel="stylesheet" href="telainicial-sistema.css">
     <script src="sistema.js" defer></script>
 </head>
@@ -28,31 +26,31 @@ if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'administ
                 <p>PÁGINAS</p>
                 <ul>
                     <li>
-                        <a href="#" title="Créditos: Flaticon - ícone Home" target="_blank">
+                        <a href="#" title="Créditos: Flaticon ‑ ícone Home" target="_blank">
                             <img src="img/home.png" alt="Home">
                         </a>
                         <a href="telainicial-sistema.html">Início</a>
                     </li>
                     <li>
-                        <a href="#" title="Créditos: Flaticon - ícone Administração" target="_blank">
+                        <a href="#" title="Créditos: Flaticon ‑ ícone Administração" target="_blank">
                             <img src="img/settings.png" alt="Administração">
                         </a>
                         <a href="administradores.html">Administração</a>
                     </li>
                     <li>
-                        <a href="#" title="Créditos: Flaticon - ícone Alunos" target="_blank">
+                        <a href="#" title="Créditos: Flaticon ‑ ícone Alunos" target="_blank">
                             <img src="img/group.png" alt="Alunos">
                         </a>
                         <a href="alunos.html">Alunos</a>
                     </li>
                     <li>
-                        <a href="#" title="Créditos: Flaticon - ícone Calendário" target="_blank">
+                        <a href="#" title="Créditos: Flaticon ‑ ícone Calendário" target="_blank">
                             <img src="img/calendar.png" alt="Calendário">
                         </a>
                         <a href="calendario.html">Calendário</a>
                     </li>
                     <li>
-                        <a href="#" title="Créditos: Flaticon - ícone Voluntários" target="_blank">
+                        <a href="#" title="Créditos: Flaticon ‑ ícone Voluntários" target="_blank">
                             <img src="img/love.png" alt="Voluntários">
                         </a>
                         <a href="voluntario.html">Voluntários</a>
@@ -90,7 +88,7 @@ if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'administ
 
             <div class="cards">
                 <div class="flex">
-                    <div class="card"> 
+                    <div class="card">
                         <div class="card-flex">
                             <img src="img/audience.png" alt="">
                             <p class="numero" id="qtd-alunos">--</p>
@@ -104,7 +102,7 @@ if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'administ
                         </div>
                         <p>Voluntários</p>
                     </div>
-                    <div class="card"> 
+                    <div class="card">
                         <div class="card-flex">
                             <img src="img/manager.png" alt="">
                             <p class="numero" id="qtd-admins">--</p>
@@ -113,16 +111,16 @@ if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'administ
                     </div>
                 </div>
                 <div class="flex1">
-                    <div class="card"> 
+                    <div class="card">
                         <div class="card-flex">
                             <img src="img/event.png" alt="">
                             <p class="numero" id="qtd-eventos">--</p>
                         </div>
                         <p>Eventos</p>
                     </div>
-                    <div class="card"> 
+                    <div class="card">
                         <div class="card-flex">
-                            <img src="img/text.png">
+                            <img src="img/text.png" alt="">
                             <p class="numero" id="qtd-anotacoes">--</p>
                         </div>
                         <p>Anotações</p>
@@ -137,7 +135,7 @@ if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'administ
                     <img id="imagem-evento" src="" alt="Capa do evento">
                 </div>
                 <p id="nome-evento">Nome do evento</p>
-                <small id="data-evento" style="font-size: 2rem;">--/--/----</small>
+                <small id="data-evento" style="font-size:2rem;">--/--/----</small>
             </div>
         </div>
 
